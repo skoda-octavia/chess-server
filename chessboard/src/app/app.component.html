@@ -1,8 +1,20 @@
-<ngx-chess-board
-  #board
-  (moveChange)="MoveCompleted($event)"
-  [dragDisabled]="!turn"
-  [drawDisabled]="true"
-  [lightTileColor]="'lightgray'"
-  [darkTileColor]="'darkgray'"
-></ngx-chess-board>
+<app-toolbar></app-toolbar>
+<div class="background-container">
+  <div class="chess-container">
+    <ngx-chess-board
+      #board
+      (moveChange)="MoveCompleted($event)"
+      [dragDisabled]="!turn"
+      [drawDisabled]="true"
+      [lightTileColor]="'#d2b48c'"
+      [darkTileColor]="'#8b4513'"
+    ></ngx-chess-board>
+
+    <!-- Panel kontrolny -->
+    <app-control-panel
+      (resetClicked)="Reset()"
+      (reverseClicked)="Reverse()"
+      (optionChanged)="handleOptionChange($event)">
+    </app-control-panel>
+  </div>
+</div>

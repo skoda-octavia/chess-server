@@ -1,0 +1,19 @@
+:host {
+    display: block;
+    width: 100%;
+    background-color: #8b4513; /* Ciemnobrązowy kolor */
+    height: 50px; /* Wysokość toolbaru */
+    color: white; /* Kolor tekstu */
+  }
+
+.toolbar-container {
+    display: flex;
+    justify-content: center; /* Wyśrodkowanie poziome */
+    align-items: center; /* Wyśrodkowanie pionowe */
+    height: 100%; /* Wysokość kontenera dopasowana do wysokości toolbaru */
+  }
+
+.toolbar-text {
+    font-size: 32px; /* Rozmiar czcionki napisu */
+    font-weight: bold; /* Pogrubienie tekstu */
+  }

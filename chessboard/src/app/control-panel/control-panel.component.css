@@ -1,0 +1,23 @@
+.control-panel {
+    display: flex; /* Ustawienie kontenera na flexbox */
+    align-items: center; /* Wyrównanie elementów do środka w pionie */
+    justify-content: space-between; /* Rozmieszczenie elementów z odstępem między nimi */
+    margin-top: 20px; /* Odstęp od planszy szachowej */
+    padding: 10px;
+    background: #795548;
+    color: white; /* Kolor tekstu */
+    border-radius: 8px; /* Zaokrąglenie rogów */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Cień */
+    width: 100%; /* Szerokość panelu kontrolnego */
+    max-width: 800px; /* Maksymalna szerokość panelu kontrolnego */
+    box-sizing: border-box; /* Uwzględnienie paddingu i borderu w szerokości */
+  }
+
+  .control-panel form {
+    margin-right: 20px; /* Odstęp między formularzem a przyciskami */
+  }
+
+  .button-group {
+    display: flex; /* Ustawienie grupy przycisków na flexbox */
+    gap: 10px; /* Odstęp między przyciskami */
+  }

@@ -1,6 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Output } from '@angular/core';
 import {NgxChessBoardService} from 'ngx-chess-board';
 import {NgxChessBoardView} from 'ngx-chess-board';
+import { ApiService } from './api.service';
 
 @Component({
   selector: 'app-root',
@@ -14,8 +15,12 @@ export class AppComponent implements OnInit {
   turn = true;
   isGameFinished = false;
   endgameMessage = '';
+  selectedOption = "LSTM"
+  isProcessingMove = false;
 
-  constructor(private ngxChessBoardService: NgxChessBoardService) {}
+  constructor(
+    private ngxChessBoardService: NgxChessBoardService,
+    private apiService: ApiService) {}
 
   ngOnInit(): void {}
 
@@ -29,6 +34,7 @@ export class AppComponent implements OnInit {
 
   MoveCompleted(event: any) {
     console.log(event)
+
     if (event.checkmate && this.turn) {
       this.endgameMessage = 'white won!';
       this.isGameFinished = true;
@@ -42,7 +48,24 @@ export class AppComponent implements OnInit {
       console.warn(this.endgameMessage)
       return;
     }
-    console.log(this.board.getFEN());
+
+    if (this.isProcessingMove) {
+      return;
+    }
+    this.isProcessingMove = true;
+    let fen = this.board.getFEN()
+    console.log(fen);
+    this.apiService.getData('get-move', this.selectedOption, fen).subscribe(
+      response => {
+        console.log('Data:', response);
+        this.board.move(response.move);
+        this.isProcessingMove = false;
+      },
+      error => {
+        console.error('Error:', error);
+        this.isProcessingMove = false;
+      }
+    );
     this.switchPlayerTurn();
   }
 
@@ -51,5 +74,19 @@ export class AppComponent implements OnInit {
     this.turn = true;
     this.endgameMessage = '';
     this.isGameFinished = false;
+  }
+
+  Reset() {
+    this.board.reset();
+    this.isGameFinished = false;
+  }
+
+  Reverse() {
+    this.board.reverse()
+  }
+
+  handleOptionChange(option: string): void {
+    this.selectedOption = option;
+    console.log('Selected option:', this.selectedOption);
   }
 }

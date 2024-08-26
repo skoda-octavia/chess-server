@@ -1,0 +1,14 @@
+<div class="control-panel">
+    <form>
+      <label for="options">Play with:  </label>
+      <select id="options" name="options" (change)="onOptionChange($event)">
+        <option value="LSTM">LSTM</option>
+        <option value="MLP">MLP</option>
+        <option value="Alpha-zero">Alpha-zero</option>
+      </select>
+    </form>
+    <div class="button-group">
+      <button (click)="Reset()">Reset</button>
+      <button (click)="Reverse()">Reverse</button>
+    </div>
+  </div>

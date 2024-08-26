@@ -1,0 +1,22 @@
+.chess-container {
+    display: flex;
+    flex-direction: column; /* Ustawienie elementów w kolumnie */
+    align-items: center; /* Wyśrodkowanie elementów poziomo */
+  }
+
+  ngx-chess-board {
+    margin-bottom: 20px; /* Odstęp między planszą a panelem kontrolnym */
+  }
+
+  .background-container {
+    background: linear-gradient(to bottom, #FF5722, #d2b48c); /* Gradient od ciemnobrązowego do jasnobrązowego */
+    padding: 20px; /* Padding wokół całego kontenera */
+    border-radius: 10px; /* Zaokrąglenie rogów kontenera */
+    width: 100%; /* Szerokość kontenera */
+    height: 100vh; /* Wysokość kontenera na 100% wysokości okna przeglądarki */
+    box-sizing: border-box; /* Uwzględnienie paddingu i borderu w szerokości i wysokości */
+    display: flex;
+    flex-direction: column; /* Ustawienie elementów w kolumnie */
+    align-items: center; /* Wyśrodkowanie elementów poziomo */
+    overflow: auto; /* Dodanie przewijania, jeśli zawartość przekracza wysokość */
+  }
