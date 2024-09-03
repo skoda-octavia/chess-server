@@ -17,6 +17,13 @@ export class AppComponent implements OnInit {
   endgameMessage = '';
   selectedOption = "LSTM"
   isProcessingMove = false;
+  uciPromotions = {
+    "q": "1",
+    "r": "2",
+    "b": "3",
+    "n": "4"
+  }
+
 
   constructor(
     private ngxChessBoardService: NgxChessBoardService,
@@ -30,6 +37,18 @@ export class AppComponent implements OnInit {
 
   switchPlayerTurn() {
     this.turn = !this.turn;
+  }
+
+  makeOponentsMove(move: string) {
+    if (move.length == 5) {
+      let translated = this.uciPromotions[move[4] as keyof typeof this.uciPromotions];
+      let translatedMove = move.substring(0, 4) + translated;
+      console.log(translatedMove);
+      this.board.move(translatedMove);
+    }
+    else {
+      this.board.move(move);
+    }
   }
 
   MoveCompleted(event: any) {
@@ -58,7 +77,7 @@ export class AppComponent implements OnInit {
     this.apiService.getData('get-move', this.selectedOption, fen).subscribe(
       response => {
         console.log('Data:', response);
-        this.board.move(response.move);
+        this.makeOponentsMove(response.move);
         this.isProcessingMove = false;
       },
       error => {
