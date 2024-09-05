@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
   turn = true;
   isGameFinished = false;
   endgameMessage = '';
-  selectedOption = "LSTM"
+  selectedOption = "lstm"
   isProcessingMove = false;
   uciPromotions = {
     "q": "1",
