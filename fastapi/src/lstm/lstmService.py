@@ -43,7 +43,7 @@ class LstmService():
             self.tar_pad
             ).to(device)
         self.model.eval()
-        self.model.load_state_dict(torch.load("models/lstm49.pth", weights_only=True))
+        self.model.load_state_dict(torch.load("models/transformer15.pth", weights_only=True))
 
     def tokenize_fen(self, fen: str):
         tokens = [self.vocab['SOS']]
