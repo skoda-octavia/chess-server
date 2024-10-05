@@ -1,22 +1,33 @@
 .chess-container {
     display: flex;
-    flex-direction: column; /* Ustawienie elementów w kolumnie */
-    align-items: center; /* Wyśrodkowanie elementów poziomo */
+    flex-direction: column;
+    align-items: center;
   }
 
   ngx-chess-board {
-    margin-bottom: 20px; /* Odstęp między planszą a panelem kontrolnym */
+    margin-bottom: 20px;
   }
 
   .background-container {
-    background: linear-gradient(to bottom, #FF5722, #d2b48c); /* Gradient od ciemnobrązowego do jasnobrązowego */
-    padding: 20px; /* Padding wokół całego kontenera */
-    border-radius: 10px; /* Zaokrąglenie rogów kontenera */
-    width: 100%; /* Szerokość kontenera */
-    height: 100vh; /* Wysokość kontenera na 100% wysokości okna przeglądarki */
-    box-sizing: border-box; /* Uwzględnienie paddingu i borderu w szerokości i wysokości */
+    background: linear-gradient(to bottom, #FF5722, #d2b48c);
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    height: 100vh;
+    box-sizing: border-box;
     display: flex;
-    flex-direction: column; /* Ustawienie elementów w kolumnie */
-    align-items: center; /* Wyśrodkowanie elementów poziomo */
-    overflow: auto; /* Dodanie przewijania, jeśli zawartość przekracza wysokość */
+    flex-direction: column;
+    align-items: center;
+    overflow: auto;
+  }
+
+  .fixed-size {
+    margin-top: 20px;
+    width: 500px;
+    height: 200px;
+    font-size: 16px;
+    padding: 5px;
+    border: 10px solid #795548;
+    border-radius: 4px;
+    background-color: #f9f9f9;
   }

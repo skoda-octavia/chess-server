@@ -10,11 +10,18 @@
       [darkTileColor]="'#8b4513'"
     ></ngx-chess-board>
 
-    <!-- Panel kontrolny -->
     <app-control-panel
       (resetClicked)="Reset()"
       (reverseClicked)="Reverse()"
       (optionChanged)="handleOptionChange($event)">
     </app-control-panel>
+    <div class="option-display">
+      <textarea
+      id="optionField"
+      [value]="selectedOptionText"
+      readonly
+      class="fixed-size"
+    ></textarea>
+    </div>
   </div>
 </div>

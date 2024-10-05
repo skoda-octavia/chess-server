@@ -17,6 +17,7 @@ export class AppComponent implements OnInit {
   endgameMessage = '';
   selectedOption = "lstm"
   isProcessingMove = false;
+  selectedOptionText = 'LSTM Engine';
   uciPromotions = {
     "q": "1",
     "r": "2",
@@ -107,5 +108,19 @@ export class AppComponent implements OnInit {
   handleOptionChange(option: string): void {
     this.selectedOption = option;
     console.log('Selected option:', this.selectedOption);
+    switch (option) {
+      case 'LSTM':
+        this.selectedOptionText = 'LSTM Engine';
+        break;
+      case 'minimax':
+        this.selectedOptionText = 'Minimax Algorithm';
+        break;
+      case 'alpha-beta':
+        this.selectedOptionText = 'Alpha-Beta Pruning';
+        break;
+      default:
+        this.selectedOptionText = 'Unknown Engine';
+        break;
+    }
   }
 }
