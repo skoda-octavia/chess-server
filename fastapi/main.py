@@ -6,6 +6,8 @@ import random
 from contextlib import asynccontextmanager
 from src.lstm.lstmService import LstmService
 from src.alpha.alphaService import AlphaService
+from src.miniMax.miniMaxService import MiniMaxService
+from src.mlp.mlpService import MlpService
 
 origins = [
     "http://localhost.tiangolo.com",
@@ -25,14 +27,36 @@ services = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    services["lstm"] = LstmService()
+    mlp_weights_path = "models/mlp/"
+    services["Lstm"] = LstmService()
     services["Alpha"] = AlphaService(
-        "models/heu_150.pth",
-        [384, 400, 500, 700, 700, 700, 500, 300, 200, 100, 64],
+        "models/model_weights_200.pth",
+        [384, 500, 800, 1000, 1000, 1000, 1000, 800, 600, 400, 200, 100, 64],
         50,
         50,
         0.0001
         )
+    services["Minimax"] = MiniMaxService(
+        "models/model_weights_256.pth",
+        [384+1, 500, 800, 1000, 1000, 1000, 1000, 800, 600, 400, 200, 100, 64],
+        0,
+        4
+    )
+
+    services["MLP"] = MlpService(
+        {
+            chess.QUEEN: mlp_weights_path + "queen.pth",
+            chess.ROOK: mlp_weights_path + "rook_450.pth",
+            chess.BISHOP: mlp_weights_path + "bishop_200.pth",
+            chess.KNIGHT: mlp_weights_path + "knight_300.pth",
+            chess.PAWN: mlp_weights_path + "pawn_150.pth",
+            chess.KING: mlp_weights_path + "king_300.pth"
+        },
+        mlp_weights_path + "selection_300.pth",
+        [7*8*8, 500, 800, 1000, 1000, 1000, 1000, 800, 600, 400, 200, 100, 64],
+        [6*8*8, 500, 800, 1000, 1000, 1000, 1000, 800, 600, 400, 200, 100, 64]
+    )
+
     print(services)
     yield
     services.clear()
