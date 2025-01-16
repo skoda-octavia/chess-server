@@ -37,10 +37,13 @@ async def lifespan(app: FastAPI):
     service_params = "serviceParams.json"
     with open(openings_path, "r", encoding="utf-8") as csvfile:
         csv_reader = csv.reader(csvfile)
-        next(csv_reader)
-        for row in csv_reader:
-            key, value = row
-            fen_dict[key] = value
+        try:
+            next(csv_reader)
+            for row in csv_reader:
+                key, value = row
+                fen_dict[key] = value
+        except StopIteration:
+            pass
 
     with open(service_params, "r", encoding="utf-8") as config_file:
         config = json.load(config_file)
