@@ -2,12 +2,15 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import chess
-import random
+import torch
 from contextlib import asynccontextmanager
 from src.lstm.lstmService import LstmService
-from src.alpha.alphaService import AlphaService
+from src.monteCarlo.monteCarloService import MonteCarloService
 from src.miniMax.miniMaxService import MiniMaxService
-from src.mlp.mlpService import MlpService
+from src.stockfish.stockfishService import StockfishService
+import csv
+import json
+from src.game.gameEnv import Game
 
 origins = [
     "http://localhost.tiangolo.com",
@@ -21,62 +24,77 @@ class ModelResponse(BaseModel):
     model: str
     fen: str
     move: str
+    eval: float = None
+
 
 services = {}
+fen_dict = {}
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    mlp_weights_path = "models/mlp/"
-    services["Lstm"] = LstmService()
-    services["Alpha"] = AlphaService(
-        "models/model_weights_200.pth",
-        [384, 500, 800, 1000, 1000, 1000, 1000, 800, 600, 400, 200, 100, 64],
-        50,
-        50,
-        0.0001
-        )
-    services["Minimax"] = MiniMaxService(
-        "models/model_weights_256.pth",
-        [384+1, 500, 800, 1000, 1000, 1000, 1000, 800, 600, 400, 200, 100, 64],
-        0,
-        4
-    )
+    openings_path = "openings.csv"
+    service_params = "serviceParams.json"
+    with open(openings_path, "r", encoding="utf-8") as csvfile:
+        csv_reader = csv.reader(csvfile)
+        next(csv_reader)
+        for row in csv_reader:
+            key, value = row
+            fen_dict[key] = value
 
-    services["MLP"] = MlpService(
-        {
-            chess.QUEEN: mlp_weights_path + "queen.pth",
-            chess.ROOK: mlp_weights_path + "rook_450.pth",
-            chess.BISHOP: mlp_weights_path + "bishop_200.pth",
-            chess.KNIGHT: mlp_weights_path + "knight_300.pth",
-            chess.PAWN: mlp_weights_path + "pawn_150.pth",
-            chess.KING: mlp_weights_path + "king_300.pth"
-        },
-        mlp_weights_path + "selection_300.pth",
-        [7*8*8, 500, 800, 1000, 1000, 1000, 1000, 800, 600, 400, 200, 100, 64],
-        [6*8*8, 500, 800, 1000, 1000, 1000, 1000, 800, 600, 400, 200, 100, 64]
-    )
+    with open(service_params, "r", encoding="utf-8") as config_file:
+        config = json.load(config_file)
 
-    print(services)
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+        torch.cuda.manual_seed(42)
+        torch.cuda.manual_seed_all(42)
+    else:
+        device = torch.device("cpu")
+
+    services["LSTM"] = LstmService(device=device, **config["services"]["LSTM"])
+    services["Alpha"] = MonteCarloService(device=device, **config["services"]["Alpha"])
+    services["Minimax"] = MiniMaxService(device=device, **config["services"]["Minimax"])
+    services["Stockfish"] = StockfishService(**config["services"]["Stockfish"])
+
+    Game.max_evaluation = config["game"]["max_evaluation"]
+    Game.win_bias = config["game"]["win_bias"]
+
+    print(f"Fen dict len: {len(fen_dict)}")
+    for key, item in services.items():
+        print(key, item)
     yield
     services.clear()
 
+
 app = FastAPI(lifespan=lifespan)
 
+
 @app.get("/get-move/{model}")
-def get_move(model: str, fen: str = Query(..., description="Forsyth-Edwards Notation string")):
+def get_move(
+    model: str, fen: str = Query(..., description="Forsyth-Edwards Notation string")
+):
     try:
         selected_service = services[model]
     except KeyError:
         raise HTTPException(status_code=400, detail="Unsupported model")
     try:
-        _ = chess.Board(fen)
-    except Exception: 
+        board = chess.Board(fen)
+    except Exception:
         raise HTTPException(status_code=400, detail="Invalid fen: " + fen)
-    move = selected_service(fen)
+
+    fen_code = board.board_fen() + str(board.turn)
+    if fen_code in fen_dict and model != "Stockfish":
+        return ModelResponse(model=model, fen=fen, move=fen_dict[fen_code], eval=32.1)
+    result = selected_service(fen)
+    if len(result) == 2:
+        move, eval = result
+    else:
+        eval = 32.1
+        move = result
     with open("debug.txt", "a") as f:
         f.write(f"fen: {fen}, move: {move}, model: {model}")
-    return ModelResponse(model=model, fen=fen, move=move)
+    return ModelResponse(model=model, fen=fen, move=move, eval=eval)
 
 
 app.add_middleware(
@@ -86,5 +104,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-

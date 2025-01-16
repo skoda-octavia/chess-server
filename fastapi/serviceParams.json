@@ -1,0 +1,37 @@
+{
+    "openings_path": "openings.csv",
+    "services": {
+        "LSTM": {
+            "vocab_path": "src/lstm/vocab_src.json",
+            "tar_vocab_path": "src/lstm/vocab_tar.json",
+            "embed": 512,
+            "hidden": 512,
+            "layers": 4,
+            "model_weights": "models/transformer15.pth"
+        },
+        "Alpha": {
+            "model_weights": "models/heu_64.pth",
+            "layers": [500, 800, 1000, 1000, 1000, 1000, 800, 600, 400, 200, 128],
+            "playouts": 100,
+            "game_timeout": 40,
+            "bin_num": 64,
+            "proc_num": 30
+        },
+        "Minimax": {
+            "model_weights": "models/heu_64.pth",
+            "layers": [500, 800, 1000, 1000, 1000, 1000, 800, 600, 400, 200, 128],
+            "dropout": 0,
+            "depth": 6,
+            "input": 385,
+            "bin_num": 64
+        },
+        "Stockfish": {
+            "engine_path": "./stockfishd",
+            "skill": 0
+        }
+    },
+    "game": {
+        "win_bias": 64,
+        "max_evaluation": 63
+    }
+}
