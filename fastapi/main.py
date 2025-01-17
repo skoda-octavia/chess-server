@@ -54,6 +54,7 @@ async def lifespan(app: FastAPI):
         torch.cuda.manual_seed_all(42)
     else:
         device = torch.device("cpu")
+    print("Device: ", device)
 
     services["LSTM"] = LstmService(device=device, **config["services"]["LSTM"])
     services["Alpha"] = MonteCarloService(device=device, **config["services"]["Alpha"])
@@ -86,7 +87,7 @@ def get_move(
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid fen: " + fen)
 
-    fen_code = board.board_fen() + str(board.turn)
+    fen_code = board.board_fen() + str(int(board.turn))
     if fen_code in fen_dict and model != "Stockfish":
         return ModelResponse(model=model, fen=fen, move=fen_dict[fen_code], eval=32.1)
     result = selected_service(fen)

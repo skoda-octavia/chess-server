@@ -135,20 +135,6 @@ class Game:
         new_game = self.simulate_move(move)
         return new_game
 
-    def equal_boards(self):
-        nonzero_mask = (self.tensor != 0).float()
-        multiplied_indices = (
-            torch.arange(1, 7, device=self.tensor.device).unsqueeze(-1).unsqueeze(-1)
-        )
-        result_tensor = self.tensor * multiplied_indices * nonzero_mask
-        tensor = torch.sum(result_tensor, dim=0)
-        for row_idx, row in enumerate(tensor):
-            for col_idx, val in enumerate(row):
-                piece_tensor = self.layer_to_piece[int(val.item())]
-                square = chess.square(col_idx, 7 - row_idx)
-                piece_board = self.board.piece_at(square)
-                assert piece_tensor == piece_board
-
     def simulate_move(self, move: chess.Move):
         new_board = self.board.copy()
         new_board.push(move)
