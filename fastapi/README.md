@@ -8,6 +8,10 @@ Available endpoints ```get-move/<model>?fen=``` where model:
 
 Configure service parameters in [serviceParams.json](./serviceParams.json)
 
+### Stockfish
+Download engine from [Stockfish official site](https://stockfishchess.org/download/) and place path in serviceParams.
+
+
 ### Run
 
 ```
